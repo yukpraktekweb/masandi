@@ -1710,7 +1710,7 @@ window.prepareRegister = () => {
 
    async function apiCall(action, payload = null) {
     // 🔒 GATES: Validasi otomatis yang pinter. Deteksi kalau masih pakai teks default bawaan template
-    if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP_APPS_SCRIPT_LO_DISINI") || SCRIPT_URL.trim() === "") {
+    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbzft2jm_OOUDEny33fgw5ADcT0VTCnMn7xTTpU91Cn48L431pvTOYeBILm6KYf2Ef8-/exec") || SCRIPT_URL.trim() === "") {
         window.showToast("Script URL belum diganti di baris konfigurasi atas ya bro!", "error");
         throw new Error("URL Belum disetting");
     }
