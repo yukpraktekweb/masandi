@@ -1579,7 +1579,6 @@ window.startOTPProcess = async (wa, email, actionType) => {
     // --- LOGIC LOGO DINAMIS iMersFireship ---
     const logoEl = document.getElementById('otpLogo');
     if (logoEl) {
-        // Ambil logo dari appState (biasanya lo simpan di config atau settings)
         const configLogo = window.appState.config?.logoUrl || window.appState.settings?.logoUrl;
         logoEl.src = configLogo || 'https://alldigital.web.id/imersfireship/logo.png';
     }
@@ -1683,33 +1682,32 @@ window.prepareRegister = () => {
 };
     
     
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzft2jm_OOUDEny33fgw5ADcT0VTCnMn7xTTpU91Cn48L431pvTOYeBILm6KYf2Ef8-/exec"; // GANTI DENGAN URL WEB APP LO
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzft2jm_OOUDEny33fgw5ADcT0VTCnMn7xTTpU91Cn48L431pvTOYeBILm6KYf2Ef8-/exec"; // GANTI DENGAN URL WEB APP LO
 
-    window.showToast = (m, t = 'success') => {
-        const el = document.getElementById('toast');
-        const msgEl = document.getElementById('toastMsg');
-        if (!el || !msgEl) return;
-        
-        msgEl.innerText = m;
-        
-        const icon = document.getElementById('toastIcon');
-        if (icon) {
-            icon.className = t === 'error' ? "ph ph-x-circle text-red-500 text-2xl drop-shadow-sm" : "ph ph-check-circle text-green-500 text-2xl drop-shadow-sm";
-        }
-        
-        el.className = t === 'error' 
-            ? "fixed bottom-6 right-6 glass text-slate-800 dark:text-white px-5 py-4 rounded-2xl shadow-2xl transform translate-y-0 opacity-100 transition-all duration-300 z-[60] flex items-center gap-3 border-l-4 border-l-red-500" 
-            : "fixed bottom-6 right-6 glass text-slate-800 dark:text-white px-5 py-4 rounded-2xl shadow-2xl transform translate-y-0 opacity-100 transition-all duration-300 z-[60] flex items-center gap-3 border-l-4 border-l-green-500";
-        
-        setTimeout(() => { 
-            // FIXED: Hapus class yang nahan pop-up, lalu tambah class untuk menyembunyikannya
-            el.classList.remove('translate-y-0', 'opacity-100');
-            el.classList.add('translate-y-20', 'opacity-0'); 
-        }, 3000);
-    };
+window.showToast = (m, t = 'success') => {
+    const el = document.getElementById('toast');
+    const msgEl = document.getElementById('toastMsg');
+    if (!el || !msgEl) return;
+    
+    msgEl.innerText = m;
+    
+    const icon = document.getElementById('toastIcon');
+    if (icon) {
+        icon.className = t === 'error' ? "ph ph-x-circle text-red-500 text-2xl drop-shadow-sm" : "ph ph-check-circle text-green-500 text-2xl drop-shadow-sm";
+    }
+    
+    el.className = t === 'error' 
+        ? "fixed bottom-6 right-6 glass text-slate-800 dark:text-white px-5 py-4 rounded-2xl shadow-2xl transform translate-y-0 opacity-100 transition-all duration-300 z-[60] flex items-center gap-3 border-l-4 border-l-red-500" 
+        : "fixed bottom-6 right-6 glass text-slate-800 dark:text-white px-5 py-4 rounded-2xl shadow-2xl transform translate-y-0 opacity-100 transition-all duration-300 z-[60] flex items-center gap-3 border-l-4 border-l-green-500";
+    
+    setTimeout(() => { 
+        el.classList.remove('translate-y-0', 'opacity-100');
+        el.classList.add('translate-y-20', 'opacity-0'); 
+    }, 3000);
+};
 
-   async function apiCall(action, payload = null) {
-    // 🔒 GATES FIXED: Validasi pintar. Cuma menolak jika masih berupa instruksi template mentah atau kosong murni!
+async function apiCall(action, payload = null) {
+    // 🔒 GATES FIXED: Hanya memblokir jika string murni mengandung teks instruksi bawaan template!
     if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP_APPS_SCRIPT_LO_DISINI") || SCRIPT_URL.trim() === "") {
         window.showToast("Script URL belum diganti di baris konfigurasi atas ya bro!", "error");
         throw new Error("URL Belum disetting");
@@ -1725,7 +1723,6 @@ window.prepareRegister = () => {
 
     if (payload) {
         options.method = 'POST';
-        // Kunci utama tembus CORS Google Apps Script dari frontend Vercel/Cloudflare
         options.headers = { 'Content-Type': 'text/plain' }; 
         options.body = JSON.stringify(payload);
     }
