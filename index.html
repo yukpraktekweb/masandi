@@ -3052,6 +3052,7 @@ window.closeUserModal = () => {
 };
 
 // --- FUNGSI SIMPAN USER (DENGAN PROTEKSI LOCK BUTTON) ---
+// --- FUNGSI SIMPAN USER (ID DIJAMIN SESUAI HTML LO) ---
 window.saveUser = async () => {
     // LOCK BUTTON: Ambil tombol simpan, matiin biar gak spam klik
     const btnSave = document.querySelector('button[onclick="saveUser()"]');
@@ -3061,10 +3062,10 @@ window.saveUser = async () => {
         const idEl = document.getElementById('userId');
         const id = idEl ? idEl.value : '';
         
-        // 🎯 FIX KUNCINYA DI SINI BRAY: Ambil value sesuai ID asli form HTML lo biar gak kebaca kosong!
-        const name = document.getElementById('userName')?.value || '';
-        const email = document.getElementById('userEmail')?.value || '';
-        const rawWa = document.getElementById('userWa')?.value || '';
+        // PAKE ID ASLI HTML LO (userName, userEmail, userWa, userRole, userPassword)
+        const name = document.getElementById('userName')?.value.trim() || '';
+        const email = document.getElementById('userEmail')?.value.trim() || '';
+        const rawWa = document.getElementById('userWa')?.value.trim() || '';
         const wa = window.formatPhoneNumber ? window.formatPhoneNumber(rawWa) : rawWa;
         const role = document.getElementById('userRole')?.value || 'user';
         const rawPass = document.getElementById('userPassword')?.value || '';
@@ -3076,8 +3077,9 @@ window.saveUser = async () => {
         });
         const licenseData = selectedProducts.join(', ');
 
+        // VALIDASI ASLI LO
         if(!name || !email) {
-            window.showToast("Nama dan Email wajib diisi ya bray!", "error");
+            window.showToast("Nama dan Email wajib diisi", "error");
             return;
         }
 
@@ -3102,7 +3104,7 @@ window.saveUser = async () => {
         if(res && res.success) {
             window.showToast("Data user & Akses berhasil disimpan!");
             await window.loadAllData();
-            window.closeUserModal(); // Panggil fungsi tutup modal yang baru dibuat
+            window.closeUserModal(); 
         } else {
             throw new Error(res.message || "Gagal menyimpan.");
         }
