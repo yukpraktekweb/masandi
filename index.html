@@ -1708,9 +1708,10 @@ window.prepareRegister = () => {
         }, 3000);
     };
 
-    async function apiCall(action, payload = null) {
-    if (SCRIPT_URL === "URL_WEB_APP_APPS_SCRIPT_LO_DISINI" || !SCRIPT_URL) {
-        window.showToast("Script URL belum diganti di kode HTML!", "error");
+   async function apiCall(action, payload = null) {
+    // 🔒 GATES: Validasi otomatis yang pinter. Deteksi kalau masih pakai teks default bawaan template
+    if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP_APPS_SCRIPT_LO_DISINI") || SCRIPT_URL.trim() === "") {
+        window.showToast("Script URL belum diganti di baris konfigurasi atas ya bro!", "error");
         throw new Error("URL Belum disetting");
     }
     
@@ -1720,12 +1721,11 @@ window.prepareRegister = () => {
     let options = { 
         method: 'GET', 
         redirect: 'follow'
-        // mode: 'cors' // Biarkan default atau hapus jika tidak perlu
     };
 
     if (payload) {
         options.method = 'POST';
-        // PERBAIKAN: Gunakan text/plain murni tanpa charset agar tembus CORS Google
+        // Kunci utama tembus CORS Google Apps Script dari frontend Vercel/Cloudflare
         options.headers = { 'Content-Type': 'text/plain' }; 
         options.body = JSON.stringify(payload);
     }
@@ -1733,7 +1733,6 @@ window.prepareRegister = () => {
     try {
         const response = await fetch(url, options);
         
-        // Cek jika response redirect atau bermasalah
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status}`);
         }
@@ -1744,7 +1743,6 @@ window.prepareRegister = () => {
         try {
             data = JSON.parse(text); 
         } catch(e) {
-            // Jika gagal parse, kemungkinan Google ngasih halaman error HTML
             console.error("Respon bukan JSON. Kemungkinan Izin/Script Error:", text);
             throw new Error("Gagal memproses data dari Google. Cek izin akses di Apps Script.");
         }
@@ -1755,7 +1753,6 @@ window.prepareRegister = () => {
     } catch (err) {
         console.error(`API Call Error (${action}) -> ${url}:`, err);
         
-        // Penanganan error koneksi yang lebih user-friendly
         if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
             throw new Error("Koneksi ke Google ditolak! Pastikan Deployment sudah 'Anyone'.");
         }
